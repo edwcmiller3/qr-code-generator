@@ -1,5 +1,5 @@
 import qrcode
-from PIL import Image
+from PIL.Image import Image
 import argparse
 import os
 
@@ -11,19 +11,18 @@ import os
 # test.show()
 
 
-def _create_img_dir() -> os.PathLike:
-    current_dir: os.PathLike = os.getcwd()
+def _create_img_dir() -> None:
+    current_dir: str = os.getcwd()
     img_dir: str = 'img/'
-    full_dir: os.PathLike = os.path.join(current_dir, img_dir)
+    full_dir: str = os.path.join(current_dir, img_dir)
 
-    qr_dir: os.PathLike = os.makedirs(
+    qr_dir: None = os.makedirs(
         os.path.dirname(full_dir), exist_ok=True)
-
-    return qr_dir
 
 
 def create_qr_code(data: str) -> Image:
-    pass
+    # TODO
+    return
 
 
 def show_qr_code(img: Image) -> None:
