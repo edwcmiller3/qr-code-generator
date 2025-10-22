@@ -4,13 +4,6 @@ from datetime import datetime
 import argparse
 import os
 
-# img = qrcode.make('blah')
-# a = type(img)
-# img.save('blah.png')
-
-# test = Image.open("blah.png")
-# test.show()
-
 
 def _create_img_dir() -> str:
     current_dir: str = os.getcwd()
@@ -22,16 +15,23 @@ def _create_img_dir() -> str:
     return full_dir
 
 
-def create_qr_code(data: str, path: str) -> Image:
-    qr = qrcode.make(data)
+def save_qr_img(qr: Image) -> None:
     ext = '.png'
     file_name: str = ext.join(datetime.now().strftime("%Y%m%d-%H%M%S"))
 
-    qr.save(file_name)
+    try:
+        path = _create_img_dir()
+        qr.save(path + file_name)
+    except:
+        raise Exception("QR code could not be saved")
 
 
 def show_qr_code(img: Image) -> None:
     img.show()
+
+
+def create_qr_code(data: str, path: str, save: bool) -> Image:
+    qr = qrcode.make(data)
 
 
 def main():
