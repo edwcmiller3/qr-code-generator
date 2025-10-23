@@ -17,7 +17,7 @@ def _create_img_dir() -> str:
 
 def save_qr_img(qr: Image) -> None:
     ext = '.png'
-    file_name: str = ext.join(datetime.now().strftime("%Y%m%d-%H%M%S"))
+    file_name: str = f"{datetime.now().strftime("%Y%m%d-%H%M%S")}{ext}"
 
     try:
         path = _create_img_dir()
@@ -30,12 +30,25 @@ def show_qr_code(img: Image) -> None:
     img.show()
 
 
-def create_qr_code(data: str, path: str, save: bool) -> Image:
+def create_qr_code(data: str) -> Image:
     qr = qrcode.make(data)
+    return qr
 
 
 def main():
     print(_create_img_dir())
+    parser = argparse.ArgumentParser(description="QR Code Generator")
+    parser.add_argument('-s', '--save', action='store_true',
+                        help='Save QR code to disk')
+    parser.add_argument('data', type=str, help='Data to be encoded in QR code')
+    args = parser.parse_args()
+
+    qr_code: Image = create_qr_code(args.data)
+
+    if args.save:
+        save_qr_img(qr_code)
+
+    show_qr_code(qr_code)
 
 
 if __name__ == '__main__':
