@@ -1,9 +1,9 @@
-import qrcode
-from PIL.Image import Image
-from datetime import datetime
-from pathlib import Path
 import argparse
 import os
+import qrcode
+from datetime import datetime
+from pathlib import Path
+from PIL.Image import Image
 
 
 def _create_img_dir() -> str:
@@ -11,14 +11,18 @@ def _create_img_dir() -> str:
     img_dir: str = 'img/'
     full_dir: str = os.path.join(current_dir, img_dir)
 
-    os.makedirs(os.path.dirname(full_dir), exist_ok=True)
+    try:
+        os.makedirs(os.path.dirname(full_dir), exist_ok=True)
+    except:
+        raise Exception(f"Directory could not be created: {full_dir}")
 
     return full_dir
 
 
 def save_qr_img(qr: Image) -> None:
-    ext = '.png'
-    file_name: str = f"{datetime.now().strftime("%Y%m%d-%H%M%S")}{ext}"
+    ext: str = '.png'
+    name: str = datetime.now().strftime("%Y%m%d-%H%M%S")
+    file_name: str = f"{name}{ext}"
 
     try:
         path = _create_img_dir()
@@ -45,15 +49,18 @@ def create_qr_code(data: str, path: bool) -> Image:
 
 def main():
     parser = argparse.ArgumentParser(description="QR Code Generator")
-    parser.add_argument('-s', '--save', action='store_true',
-                        help='Save QR code to disk')
     parser.add_argument('data', type=str,
                         help='String data to be encoded in QR code')
+    parser.add_argument('-s', '--save', action='store_true',
+                        help='Save QR code to disk')
     parser.add_argument('-p', '--path', action='store_true',
                         help='Flag to indicate if data parameter is a path to a file')
     args = parser.parse_args()
 
     qr_code: Image = create_qr_code(args.data, args.path)
+
+    if args.save:
+        save_qr_img(qr_code)
 
     show_qr_code(qr_code)
 
