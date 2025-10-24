@@ -37,10 +37,13 @@ def show_qr_code(img: Image) -> None:
 
 def create_qr_code(data: str, path: bool) -> Image:
     if path:
-        data_path: Path = Path(data)
-        with open(data_path, 'rb') as p:
-            file_data: bytes = p.read()
-            qr = qrcode.make(file_data)
+        if os.path.exists(Path(data)):
+            data_path: Path = Path(data)
+            with open(data_path, 'rb') as p:
+                file_data: bytes = p.read()
+                qr = qrcode.make(file_data)
+        else:
+            raise Exception("Supplied path does not exist")
     else:
         qr = qrcode.make(data)
 
