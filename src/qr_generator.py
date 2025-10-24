@@ -1,6 +1,7 @@
 import qrcode
 from PIL.Image import Image
 from datetime import datetime
+from pathlib import Path
 import argparse
 import os
 
@@ -30,23 +31,29 @@ def show_qr_code(img: Image) -> None:
     img.show()
 
 
-def create_qr_code(data: str) -> Image:
-    qr = qrcode.make(data)
+def create_qr_code(data: str, path: bool) -> Image:
+    if path:
+        data_path: Path = Path(data)
+        with open(data_path, 'rb') as p:
+            file_data: bytes = p.read()
+            qr = qrcode.make(file_data)
+    else:
+        qr = qrcode.make(data)
+
     return qr
 
 
 def main():
-    print(_create_img_dir())
     parser = argparse.ArgumentParser(description="QR Code Generator")
     parser.add_argument('-s', '--save', action='store_true',
                         help='Save QR code to disk')
-    parser.add_argument('data', type=str, help='Data to be encoded in QR code')
+    parser.add_argument('data', type=str,
+                        help='String data to be encoded in QR code')
+    parser.add_argument('-p', '--path', action='store_true',
+                        help='Flag to indicate if data parameter is a path to a file')
     args = parser.parse_args()
 
-    qr_code: Image = create_qr_code(args.data)
-
-    if args.save:
-        save_qr_img(qr_code)
+    qr_code: Image = create_qr_code(args.data, args.path)
 
     show_qr_code(qr_code)
 
